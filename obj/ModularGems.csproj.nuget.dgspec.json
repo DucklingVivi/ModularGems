@@ -1,0 +1,57 @@
+{
+  "format": 1,
+  "restore": {
+    "F:\\Users\\Vivian\\Documents\\My games\\Terraria\\ModLoader\\Beta\\Mod Sources\\ModularGems\\ModularGems.csproj": {}
+  },
+  "projects": {
+    "F:\\Users\\Vivian\\Documents\\My games\\Terraria\\ModLoader\\Beta\\Mod Sources\\ModularGems\\ModularGems.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "F:\\Users\\Vivian\\Documents\\My games\\Terraria\\ModLoader\\Beta\\Mod Sources\\ModularGems\\ModularGems.csproj",
+        "projectName": "ModularGems",
+        "projectPath": "F:\\Users\\Vivian\\Documents\\My games\\Terraria\\ModLoader\\Beta\\Mod Sources\\ModularGems\\ModularGems.csproj",
+        "packagesPath": "C:\\Users\\Vivian\\.nuget\\packages\\",
+        "outputPath": "F:\\Users\\Vivian\\Documents\\My games\\Terraria\\ModLoader\\Beta\\Mod Sources\\ModularGems\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Vivian\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.404\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

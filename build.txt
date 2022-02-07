@@ -1,0 +1,3 @@
+displayName = Upgrades and Gems
+author = Vivian
+version = 0.1
