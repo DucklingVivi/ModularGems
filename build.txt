@@ -1,3 +1,8 @@
 displayName = Upgrades and Gems
 author = Vivian
 version = 0.1
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePDB = true
+hideCode = false
+hideResources = false
+includeSource = true
