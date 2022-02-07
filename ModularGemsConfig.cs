@@ -39,7 +39,7 @@ namespace ModularGems
 
         public override void OnChanged()
         {
-            if (ModularGems.JewelBagUI == null)
+            if (ModularGems.JewelBagSlotUI == null)
                 return;
 
             if (lastSlotLocation == Location.Custom && SlotLocation != Location.Custom)
@@ -48,12 +48,12 @@ namespace ModularGems
             if (ShowCustomLocationPanel)
                 SlotLocation = Location.Custom;
 
-            ModularGems.JewelBagUI.Panel.Visible = ShowCustomLocationPanel;
-            ModularGems.JewelBagUI.Panel.CanDrag = ShowCustomLocationPanel;
+            ModularGems.JewelBagSlotUI.Panel.Visible = ShowCustomLocationPanel;
+            ModularGems.JewelBagSlotUI.Panel.CanDrag = ShowCustomLocationPanel;
 
             if (ResetCustomSlotLocation)
             {
-                ModularGems.JewelBagUI.ResetPosition();
+                ModularGems.JewelBagSlotUI.ResetPosition();
                 ResetCustomSlotLocation = false;
             }
 

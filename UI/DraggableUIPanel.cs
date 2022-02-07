@@ -28,7 +28,15 @@ namespace ModularGems.UI
                 BorderColor = visible ? defaultBorderColor : Color.Transparent;
             }
         }
+        public virtual Rectangle GetOuterRectangle()
+        {
+            return GetDimensions().ToRectangle();
 
+        }
+        public virtual Rectangle GetInnerRectangle()
+        {
+            return GetInnerDimensions().ToRectangle();
+        }
         public override void MouseDown(UIMouseEvent evt)
         {
             if (!visible) return;
@@ -37,8 +45,8 @@ namespace ModularGems.UI
 
             if (!CanDrag) return;
 
-            if (ContainsPoint(evt.MousePosition) &&
-               !GetInnerDimensions().ToRectangle().Contains(evt.MousePosition.ToPoint()))
+            if (GetOuterRectangle().Contains(evt.MousePosition.ToPoint()) &&
+               !GetInnerRectangle().Contains(evt.MousePosition.ToPoint()))
             {
                 DragBegin(evt);
             }
@@ -75,7 +83,7 @@ namespace ModularGems.UI
 
             Rectangle parentDimensions = Parent.GetDimensions().ToRectangle();
 
-            if (!GetDimensions().ToRectangle().Intersects(parentDimensions))
+            if (!GetOuterRectangle().Intersects(parentDimensions))
             {
                 Left.Pixels = Utils.Clamp(Left.Pixels, 0, parentDimensions.Right - Width.Pixels);
                 Top.Pixels = Utils.Clamp(Top.Pixels, 0, parentDimensions.Bottom - Height.Pixels);

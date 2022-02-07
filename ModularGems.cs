@@ -12,36 +12,46 @@ namespace ModularGems
 {
 	public class ModularGems : Mod
 	{
-        public static JewelBagSlotUI JewelBagUI;
-        internal static int jewelBagPosX;
-        internal static int jewelBagPosY;
-
+        public static JewelBagSlotUI JewelBagSlotUI;
+        public static JewelBagUI JewelBagUI;
+        internal static int jewelBagSlotPosX;
+        internal static int jewelBagSlotPosY;
+        internal static bool JewelBagOpen;
         public class ModularGemsSystem : ModSystem
         {
+            private UserInterface jewelBagSlotInterface;
             private UserInterface jewelBagInterface;
-            
             public override void Load()
             {
                 if (!Main.dedServ)
                 {
+                    jewelBagSlotInterface = new UserInterface();
                     jewelBagInterface = new UserInterface();
-                    JewelBagUI = new JewelBagSlotUI();
 
+                    JewelBagSlotUI = new JewelBagSlotUI();
+                    JewelBagUI = new JewelBagUI();
+
+                    JewelBagSlotUI.Activate();
                     JewelBagUI.Activate();
+                    
+                    jewelBagSlotInterface.SetState(JewelBagSlotUI);
                     jewelBagInterface.SetState(JewelBagUI);
                 }
             }
             public override void Unload()
             {
-                JewelBagUI = null;
+                JewelBagSlotUI = null;
             }
             public override void UpdateUI(GameTime gameTime)
             {
+                if (JewelBagSlotUI.IsVisible)
+                {
+                    jewelBagSlotInterface?.Update(gameTime);
+                }
                 if (JewelBagUI.IsVisible)
                 {
                     jewelBagInterface?.Update(gameTime);
                 }
-
                 int mapH = 0;
                 Main.inventoryScale = 0.85f;
 
@@ -75,12 +85,12 @@ namespace ModularGems
                     {
                         slotCount = 6;
                     }
-                    jewelBagPosX = Main.screenWidth - 82 - 14 - (47 * 3) - (int)(TextureAssets.InventoryBack.Width() * Main.inventoryScale);
-                    jewelBagPosY = (int)(mapH + 174 + 4 + slotCount * 56 * Main.inventoryScale);
+                    jewelBagSlotPosX = Main.screenWidth - 82 - 14 - (47 * 3) - (int)(TextureAssets.InventoryBack.Width() * Main.inventoryScale);
+                    jewelBagSlotPosY = (int)(mapH + 174 + 4 + slotCount * 56 * Main.inventoryScale);
 
                     if (Main.netMode == NetmodeID.MultiplayerClient)
                     {
-                        jewelBagPosX -= 47;
+                        jewelBagSlotPosX -= 47;
                     }
                 }
 
@@ -96,6 +106,19 @@ namespace ModularGems
                         inventoryLayer,
                         new LegacyGameInterfaceLayer(
                             "ModularGems: Custom Slot UI",
+                            () => {
+                                if (JewelBagSlotUI.IsVisible)
+                                {
+                                    jewelBagSlotInterface.Draw(Main.spriteBatch, new GameTime());
+                                }
+
+                                return true;
+                            },
+                            InterfaceScaleType.UI));
+                    layers.Insert(
+                        inventoryLayer,
+                        new LegacyGameInterfaceLayer(
+                            "ModularGems: JewelBag UI",
                             () => {
                                 if (JewelBagUI.IsVisible)
                                 {
