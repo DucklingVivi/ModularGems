@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using ModularGems.UI;
 using System.Collections.Generic;
 using Terraria;
@@ -17,20 +18,29 @@ namespace ModularGems
         internal static int jewelBagSlotPosX;
         internal static int jewelBagSlotPosY;
         internal static bool JewelBagOpen;
+        public static ModKeybind rotateHotkey { get; private set; }
+        public override void Load()
+        {
+            rotateHotkey = KeybindLoader.RegisterKeybind(this, "Rotate Held Jewel", Keys.Y);
+        }
         public class ModularGemsSystem : ModSystem
         {
             private UserInterface jewelBagSlotInterface;
             private UserInterface jewelBagInterface;
             public override void Load()
             {
+                
                 if (!Main.dedServ)
                 {
+
+                    
+                    Jewel.Load();
                     jewelBagSlotInterface = new UserInterface();
                     jewelBagInterface = new UserInterface();
 
                     JewelBagSlotUI = new JewelBagSlotUI();
                     JewelBagUI = new JewelBagUI();
-
+                    
                     JewelBagSlotUI.Activate();
                     JewelBagUI.Activate();
                     

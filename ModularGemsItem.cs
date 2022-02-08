@@ -29,10 +29,8 @@ namespace ModularGems
             if (item.type == ModContent.ItemType<BasicJewel>())
             {
                 this.jewel = new Jewel();
-                this.jewel.anchor = new Point16(0, 0);
-                this.jewel.color = Color.Red;
-                this.jewel.Shape.Add(new Point16(0, 0));
-                this.jewel.Shape.Add(new Point16(0, 1));
+                this.jewel.anchor = new Point16(-1, -1);
+                
             }
         }
         public override GlobalItem Clone(Item item, Item itemClone)
