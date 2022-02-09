@@ -26,8 +26,8 @@ namespace ModularGems.Jewels
             Shape.Add(new Point16(0, 0));
             Shape.Add(new Point16(0, 1));
             Shape.Add(new Point16(1, 1));
-            color = Color.Red;
-            itemColor = Color.Red;
+            color = new Color(255, 78, 66);
+            itemColor = Color.White;
             rarity = 3;
 
         }
@@ -40,6 +40,7 @@ namespace ModularGems.Jewels
         public override void AddRecipe(Recipe recipe)
         {
             recipe.AddIngredient(ItemID.LifeCrystal);
+            recipe.AddIngredient(ItemID.HealingPotion, 2);
             recipe.AddTile(TileID.Anvils);
 
         }

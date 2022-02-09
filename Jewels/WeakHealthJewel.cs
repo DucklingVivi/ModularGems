@@ -26,8 +26,8 @@ namespace ModularGems.Jewels
             Shape.Add(new Point16(0, 0));
             Shape.Add(new Point16(0, 1));
 
-            color = Color.Red;
-            itemColor = Color.Red;
+            color = new Color(255, 86, 74);
+            itemColor = Color.White;
             rarity = 2;
 
         }
