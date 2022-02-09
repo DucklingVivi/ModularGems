@@ -1,7 +1,13 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ModularGems.Items;
+using ModularGems.Jewels;
 using ModularGems.UI;
+using ReLogic.Content;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
@@ -13,15 +19,58 @@ namespace ModularGems
 {
 	public class ModularGems : Mod
 	{
+
+        public readonly IDictionary<string,JewelComponent> jewelComponents = new Dictionary<string,JewelComponent>();
         public static JewelBagSlotUI JewelBagSlotUI;
         public static JewelBagUI JewelBagUI;
         internal static int jewelBagSlotPosX;
         internal static int jewelBagSlotPosY;
         internal static bool JewelBagOpen;
+        public static ModularGems Instance;
         public static ModKeybind rotateHotkey { get; private set; }
         public override void Load()
         {
+            Instance = this;
             rotateHotkey = KeybindLoader.RegisterKeybind(this, "Rotate Held Jewel", Keys.Y);
+            AutoLoad();
+        }
+
+        private void AutoLoad()
+        {
+            foreach (Type item in Code.GetTypes().OrderBy((Type type) => type.FullName, StringComparer.InvariantCulture))
+            {
+                if (item.IsSubclassOf(typeof(JewelComponent)))
+                {
+                    JewelComponent jewelComponent = (JewelComponent)Activator.CreateInstance(item);
+                    jewelComponent.mod = this;
+                    string name = item.Name;
+                    if(jewelComponent.Autoload(ref name))
+                    {
+                        jewelComponent.Name = name;
+                        jewelComponent.type = JewelComponentLoader.ReserveComponentID();
+                        jewelComponent.texture = "ModularGems/Jewels/" + item.Name;
+
+                        Asset<Texture2D> dummyAsset;
+                        if(!ModContent.RequestIfExists<Texture2D>(jewelComponent.texture,out dummyAsset, AssetRequestMode.ImmediateLoad))
+                        {
+                            jewelComponent.texture = "ModularGems/Items/BasicJewel";
+                        }
+
+                        jewelComponent.SetDefaults();
+                        jewelComponents[name] = jewelComponent;
+                        JewelComponentLoader.jewelComponents.Add(jewelComponent);
+                        ContentInstance.Register(jewelComponent);
+
+                    }
+                }
+            }
+        }
+        public override void AddRecipes()
+        {
+            foreach(JewelComponent jewelComponent in jewelComponents.Values)
+            {
+                jewelComponent.CreateRecipe(CreateRecipe(ModContent.ItemType<BasicJewel>()));
+            }
         }
         public class ModularGemsSystem : ModSystem
         {

@@ -1,4 +1,4 @@
-﻿// Code modified from Wingslot mod
+﻿
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent.UI.Elements;

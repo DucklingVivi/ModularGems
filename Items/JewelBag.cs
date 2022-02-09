@@ -25,5 +25,20 @@ namespace ModularGems.Items
             return false;
         }
 
+        public override void UpdateAccessory(Player player, bool hideVisual)
+        {
+            if (this.Item.GetGlobalItem<ModularGemsItem>() != null)
+            {
+                this.Item.GetGlobalItem<ModularGemsItem>().grid.Update(player);
+            }
+        }
+
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.Silk, 6);
+            recipe.AddTile(TileID.Loom);
+            recipe.Register();
+        }
     }
 }

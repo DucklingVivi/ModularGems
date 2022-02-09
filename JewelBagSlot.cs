@@ -24,7 +24,7 @@ namespace ModularGems
         private static Texture2D bagButtonTexture;
         private static Texture2D bagHighlightTexture;
         private static bool prevState = false;
-        
+        public static JewelBagSlot Instance;
         public override string Name => "JewelBagSlot";
         public override bool DrawDyeSlot => false;
         public override bool DrawVanitySlot => false;
@@ -41,6 +41,7 @@ namespace ModularGems
 
         public override void SetupContent()
         {
+            Instance = this;
             SetStaticDefaults();
             base.SetupContent();
         }

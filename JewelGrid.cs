@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ModularGems.Jewels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,34 @@ namespace ModularGems
 {
     public class JewelGrid
     {
+
+        public struct JewelGridData
+        {
+            public Jewel jewel;
+            public Item item;
+            public JewelGridData(Jewel jewel, Item item)
+            {
+                this.jewel = jewel;
+                this.item = item;
+            }
+            public JewelGridData Clone()
+            {
+                return new JewelGridData(this.jewel.Clone(), this.item.Clone());
+            }
+        }
+
         public int Width;
         public int Height;
-        public List<Jewel> jewelList = new List<Jewel>();
+        public List<JewelGridData> jewelGridData = new List<JewelGridData>();
+
+        internal void Update(Player player)
+        {
+            foreach(JewelGridData data in jewelGridData)
+            {
+                JewelComponentLoader.GetComponent(data.jewel.type).Update(player);
+            }
+        }
+
         public JewelGrid()
         {
 
@@ -30,53 +56,66 @@ namespace ModularGems
             JewelGrid clone = new JewelGrid();
             clone.Width = Width;
             clone.Height = Height;
-            foreach (Jewel jewel in jewelList)
+            foreach (JewelGridData data in jewelGridData)
             {
-                clone.jewelList.Add(jewel.Clone());
+                clone.jewelGridData.Add(data.Clone());
             }
 
             return clone;
             throw new NotImplementedException();
         }
-        public void addJewelToGrid(Jewel jewel)
+        public void addJewelToGrid(Jewel jewel, Item item)
         {
-            Jewel toadd = jewel.Clone();
-            jewelList.Add(toadd);
+            Jewel toaddJ = jewel.Clone();
+            Item toaddI = item.Clone();
+            jewelGridData.Add(new JewelGridData(toaddJ,toaddI));
         }
         public void Draw(SpriteBatch spriteBatch, Vector2 Position)
         {
             
-            foreach(Jewel jewel in jewelList)
+            foreach(JewelGridData data in jewelGridData)
             {
-                jewel.Draw(spriteBatch, Position);
+                data.jewel.Draw(spriteBatch, Position);
             }
         }
 
-        internal bool tryAddJewelToGrid(Jewel previewJewel)
+        internal bool tryAddJewelToGrid(Jewel previewJewel, Item item)
         {
             if (canFitJewelInGrid(previewJewel))
             {
-                addJewelToGrid(previewJewel);
+                addJewelToGrid(previewJewel, item.Clone());
                 return true;
             }
             return false;
             
         }
-        internal void removeJewelFromGrid(Jewel jewel)
+        internal Item removeJewelFromGrid(Jewel jewel)
         {
-            jewelList.Remove(jewel);
+            foreach(JewelGridData data in jewelGridData)
+            {
+                if (data.jewel.Equals(jewel))
+                {
+                    Item item = data.item.Clone();
+                    item.GetGlobalItem<ModularGemsItem>().jewel = data.jewel;
+                    jewelGridData.Remove(data);
+                    
+                    return item;
+                }
+            }
+            
+            return new Item();
         }
         internal bool canFitJewelInGrid(Jewel jewel)
         {
             List<Point16> points = new List<Point16>();
-            foreach(Jewel existingJewel in jewelList)
+            foreach(JewelGridData data in jewelGridData)
             {
-                foreach (Point16 point in existingJewel.Shape)
+                foreach (Point16 point in data.jewel._shape)
                 {
-                    points.Add(point + existingJewel.anchor);
+                    points.Add(point + data.jewel.anchor);
                 }
             }
-            foreach(Point16 point1 in jewel.Shape)
+            foreach(Point16 point1 in jewel._shape)
             {
                 if (points.Contains(point1 + jewel.anchor))
                 {
@@ -88,14 +127,14 @@ namespace ModularGems
             }
             return true;
         }
-        internal bool isHoveringOverJewel(out Jewel jewel, Point16 position)
+        internal bool isHoveringOverJewel(out JewelGridData jewelData, Point16 position)
         {
-            jewel = null;
-            foreach(Jewel checkingJewel in jewelList)
+            jewelData = new JewelGridData();
+            foreach(JewelGridData data in jewelGridData)
             {
-                if (checkingJewel.Shape.Contains(position - checkingJewel.anchor))
+                if (data.jewel._shape.Contains(position - data.jewel.anchor))
                 {
-                    jewel = checkingJewel; 
+                    jewelData = data; 
                     return true;
                 }
             }
