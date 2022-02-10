@@ -10,29 +10,30 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ModularGems.Jewels
+namespace ModularGems.Items.Jewels
 {
-    public class SlimeJewel : JewelComponent
+    public class SlimeJewel : BasicJewel
     {
 
-       
 
         public override void SetDefaults()
         {
-            DisplayName = "Slime King's Jewel";
-            addTooltipLine("basicDesc", "Gem");
-            addTooltipLine("basicDesc2", "Slimes become friendly");
-            Shape.Add(new Point16(0,0));
-            Shape.Add(new Point16(1,1));
-            Shape.Add(new Point16(-1,1));
-            Shape.Add(new Point16(1,-1));
-            color = Color.Blue;
-            itemColor = Color.White;
-            rarity = 3;
-            
+            base.SetDefaults();
+            DisplayName.SetDefault("Slime King's Jewel");
+            Tooltip.SetDefault("Gem\nSlimes become friendly");
+            Shape.Add(new Point16(0, 0));
+            Shape.Add(new Point16(1, 1));
+            Shape.Add(new Point16(-1, 1));
+            Shape.Add(new Point16(1, -1));
+
+
+            jewel.color = Color.Blue;
+            Item.color = Color.White;
+            Item.rare = ItemRarityID.Orange;
+            syncJewel();
         }
 
-        internal override void Update(Player player)
+        public override void UpdateJewel(Player player)
         {
             player.npcTypeNoAggro[1] = true;
             player.npcTypeNoAggro[16] = true;
@@ -56,13 +57,12 @@ namespace ModularGems.Jewels
             player.npcTypeNoAggro[336] = true;
             player.npcTypeNoAggro[537] = true;
         }
-
-        public override void AddRecipe(Recipe recipe)
+        public override void AddRecipes()
         {
-
-            recipe.AddIngredient(ItemID.RoyalGel,3);
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.RoyalGel, 3);
             recipe.AddTile(TileID.Solidifier);
-
+            recipe.Register();
         }
     }
 }

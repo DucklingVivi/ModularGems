@@ -11,18 +11,17 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using static Terraria.Player;
 
-namespace ModularGems.Jewels
+namespace ModularGems.Items.Jewels
 {
-    public class DashJewel : JewelComponent
+    public class DashJewel : BasicJewel
     {
-
-
 
         public override void SetDefaults()
         {
-            DisplayName = "Dash Jewel";
-            addTooltipLine("basicDesc", "Gem");
-            addTooltipLine("basicDesc2", "Gives you a weak dash");
+            base.SetDefaults();
+            DisplayName.SetDefault("Dash Jewel");
+            Tooltip.SetDefault("Gem\nGives you a weak dash");
+
             Shape.Add(new Point16(-1, 1));
             Shape.Add(new Point16(-1, 0));
             Shape.Add(new Point16(-1, -1));
@@ -32,22 +31,24 @@ namespace ModularGems.Jewels
             Shape.Add(new Point16(1, 1));
             Shape.Add(new Point16(1, 0));
             Shape.Add(new Point16(1, -1));
-            color = new Color(25,25,25);
-            itemColor = new Color(25, 25, 25);
-            rarity = 3;
 
+
+            jewel.color = new Color(25, 25, 25);
+            Item.color = new Color(25, 25, 25);
+            Item.rare = ItemRarityID.Orange;
+            syncJewel();
         }
 
-        internal override void Update(Player player)
+        public override void UpdateJewel(Player player)
         {
             player.dashType = 10;
 
 
-            if(player.dashDelay > 0)
+            if (player.dashDelay > 0)
             {
                 player.dashDelay--;
             }
-            else if(player.dashDelay == 0)
+            else if (player.dashDelay == 0)
             {
                 int dir;
                 bool dashing;
@@ -66,7 +67,13 @@ namespace ModularGems.Jewels
 
                 }
             }
-            
+        }
+        public override void AddRecipes()
+        {
+            Recipe recipe = CreateRecipe();
+            recipe.AddIngredient(ItemID.EoCShield, 3);
+            recipe.AddTile(TileID.TinkerersWorkbench);
+            recipe.Register();
         }
 
         private void DoCommonDashHandle(out int dir, out bool dashing,Player player)
@@ -109,12 +116,6 @@ namespace ModularGems.Jewels
                     player.dashTime = -15;
                 }
             }
-        }
-        public override void AddRecipe(Recipe recipe)
-        {
-            recipe.AddIngredient(ItemID.EoCShield, 3);
-            recipe.AddTile(TileID.TinkerersWorkbench);
-
         }
     }
 }

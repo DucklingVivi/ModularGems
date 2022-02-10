@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ModularGems.Items;
+using ModularGems.Items.Jewels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,8 @@ namespace ModularGems.UI
         public override void OnInitialize()
         {
             Panel = new JewelBagUIMainPanel();
-            Panel.Width.Set(bagWidth * jewelSize + padding*2, 0f);
-            Panel.Height.Set(bagWidth * jewelSize + padding*2 + JewelBagUIMainPanel.draggingPanelHeight, 0f);
+            Panel.Width.Set(bagWidth * jewelSize + padding * 2, 0f);
+            Panel.Height.Set(bagWidth * jewelSize + padding * 2 + JewelBagUIMainPanel.draggingPanelHeight, 0f);
             Panel.CanDrag = true;
             Panel.Visible = true;
             Panel.SetPadding(0f);
@@ -58,7 +59,7 @@ namespace ModularGems.UI
                     Panel.Width.Set(bagWidth * jewelSize + padding * 2, 0f);
                     Panel.Height.Set(bagWidth * jewelSize + padding * 2 + JewelBagUIMainPanel.draggingPanelHeight, 0f);
                 }
-               
+
             }
             base.Update(gameTime);
         }
@@ -94,14 +95,14 @@ namespace ModularGems.UI
             rectangle.Height -= (int)draggingPanelHeight;
             return rectangle;
         }
-        
+
     }
 
     public class JewelBagMainContentUI : UIPanel
     {
 
         public Jewel previewJewel;
-        public JewelGridData hoverData;
+        public Item hoverItem;
 
         public static Texture2D backTexture;
         public static Texture2D CornersTexture;
@@ -113,7 +114,7 @@ namespace ModularGems.UI
 
         public override void OnInitialize()
         {
-            CornersTexture = ModContent.Request<Texture2D>("ModularGems/UI/BorderCorners",ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            CornersTexture = ModContent.Request<Texture2D>("ModularGems/UI/BorderCorners", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             BorderVertical = ModContent.Request<Texture2D>("ModularGems/UI/BorderVertical", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             BorderHorizontal = ModContent.Request<Texture2D>("ModularGems/UI/BorderHorizontal", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             backTexture = ModContent.Request<Texture2D>("ModularGems/UI/CrystalBackdrop", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
@@ -128,7 +129,7 @@ namespace ModularGems.UI
                 {
 
                     Rectangle target = new Rectangle((int)Position.X + (int)JewelBagUI.jewelSize * i, (int)Position.Y + (int)JewelBagUI.jewelSize * j, (int)JewelBagUI.jewelSize, (int)JewelBagUI.jewelSize);
-                    spriteBatch.Draw(backTexture, target, new Color(245,245,245));
+                    spriteBatch.Draw(backTexture, target, new Color(245, 245, 245));
                 }
             }
             Rectangle size = GetDimensions().ToRectangle();
@@ -146,79 +147,79 @@ namespace ModularGems.UI
             spriteBatch.Draw(BorderVertical, border2, Color.White);
 
 
-            Rectangle rectangle = new Rectangle(size.X, size.Y, 10,10);
+            Rectangle rectangle = new Rectangle(size.X, size.Y, 10, 10);
 
-            spriteBatch.Draw(CornersTexture, new Rectangle(size.X, size.Y, 10,10), new Rectangle(0,0,10,10), Color.White);
+            spriteBatch.Draw(CornersTexture, new Rectangle(size.X, size.Y, 10, 10), new Rectangle(0, 0, 10, 10), Color.White);
             spriteBatch.Draw(CornersTexture, new Rectangle(size.X + size.Width - 10, size.Y, 10, 10), new Rectangle(12, 0, 10, 10), Color.White);
             spriteBatch.Draw(CornersTexture, new Rectangle(size.X, size.Y + size.Height - 10, 10, 10), new Rectangle(0, 12, 10, 10), Color.White);
-            spriteBatch.Draw(CornersTexture, new Rectangle(size.X + size.Width - 10, size.Y + size.Height -10, 10, 10), new Rectangle(12, 12, 10, 10), Color.White);
+            spriteBatch.Draw(CornersTexture, new Rectangle(size.X + size.Width - 10, size.Y + size.Height - 10, 10, 10), new Rectangle(12, 12, 10, 10), Color.White);
             JewelGrid grid = ModContent.GetInstance<JewelBagSlot>().FunctionalItem.GetGlobalItem<ModularGemsItem>().grid;
             grid.Draw(spriteBatch, GetInnerDimensions().Position());
-            if(previewJewel != null)
+            if (previewJewel != null)
             {
                 previewJewel.DrawHover(spriteBatch, GetInnerDimensions().Position());
             }
-            if(hoverData.item!= null && hoverData.jewel != null)
+            if (!hoverItem.IsAir)
             {
-                Main.HoverItem = hoverData.item.Clone();
-                Main.hoverItemName = hoverData.item.HoverName;
-                hoverData.jewel.DrawHighlight(spriteBatch, GetInnerDimensions().Position());
+                Main.HoverItem = hoverItem.Clone();
+                Main.hoverItemName = hoverItem.HoverName;
+                BasicJewel jewel = hoverItem.ModItem as BasicJewel;
+                jewel.jewel.DrawHighlight(spriteBatch, GetInnerDimensions().Position());
             }
-            
+
 
         }
         public override void Update(GameTime gameTime)
         {
-            hoverData = new JewelGridData();
+            hoverItem = new Item();
             oldMouse = curMouse;
             curMouse = Mouse.GetState();
             previewJewel = null;
             JewelGrid grid = ModContent.GetInstance<JewelBagSlot>().FunctionalItem.GetGlobalItem<ModularGemsItem>().grid;
-            ModularGemsItem item;
-            if (Main.mouseItem.TryGetGlobalItem<ModularGemsItem>(out item))
+            if (Main.mouseItem.ModItem is BasicJewel)
             {
-                if (item.jewel != null)
+                JewelGlobalItem globalI = Main.mouseItem.GetGlobalItem<JewelGlobalItem>();
+                BasicJewel jewel = Main.mouseItem.ModItem as BasicJewel;
+                previewJewel = jewel.jewel;
+                Point16 anchor = new Point16((int)Math.Floor((Main.mouseX - GetInnerDimensions().X) / 50f), (int)Math.Floor((Main.mouseY - GetInnerDimensions().Y) / 50f));
+                globalI.anchor = anchor;
+                
+                if (ModularGems.rotateHotkey.JustPressed)
+                {  
+                    globalI.rotation = (globalI.rotation + 1) % 4;
+                }
+                jewel.syncJewel();
+                if (curMouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
                 {
-                    previewJewel = item.jewel;
-                    Point16 anchor = new Point16((int)Math.Floor((Main.mouseX - GetInnerDimensions().X) / 50f), (int)Math.Floor((Main.mouseY - GetInnerDimensions().Y) / 50f));
-                    previewJewel.anchor = anchor;
-                    if (ModularGems.rotateHotkey.JustPressed)
-                    {
-                        previewJewel.SetRotation((previewJewel.rotation + 1) % 4);
-                    }
-                    if (curMouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
-                    {
 
-                        if (grid.tryAddJewelToGrid(previewJewel, Main.mouseItem))
-                        {
-                            SoundEngine.PlaySound(SoundID.CoinPickup, -1, -1, 1);
-                            Main.mouseItem.TurnToAir();
-                        }
+                    if (grid.tryAddJewelToGrid(Main.mouseItem))
+                    {
+                        SoundEngine.PlaySound(SoundID.CoinPickup, -1, -1, 1);
+                        Main.mouseItem.TurnToAir();
                     }
                 }
             }
             else if (Main.mouseItem.IsAir)
             {
-                JewelGridData data;
+                Item item;
                 Point16 anchor = new Point16((int)Math.Floor((Main.mouseX - GetInnerDimensions().X) / 50f), (int)Math.Floor((Main.mouseY - GetInnerDimensions().Y) / 50f));
-                if (grid.isHoveringOverJewel(out data, anchor))
+                if (grid.isHoveringOverJewel(out item, anchor))
                 {
-                    hoverData = data;
-                    Main.HoverItem = data.item.Clone();
-                    Main.hoverItemName = data.item.HoverName;
                     
+                    hoverItem = item.Clone();
+
                     if (curMouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
                     {
-                        Main.mouseItem = grid.removeJewelFromGrid(hoverData.jewel).Clone();
+                        Main.mouseItem = grid.removeJewelFromGrid(item).Clone();
                     }
                 }
             }
-            
-            
-            
-           
 
-            
+
+
+
+
+
 
         }
     }

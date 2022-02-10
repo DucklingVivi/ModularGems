@@ -10,7 +10,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ModularGems.Jewels
+namespace ModularGems.Items.Jewels
 {
     public class RocketJewel : BasicJewel
     {
@@ -18,10 +18,7 @@ namespace ModularGems.Jewels
        
 
         
-        internal override void Update(Player player)
-        {
-            player.accRunSpeed = 6f;
-        }
+        
 
         public override void AddRecipes()
         {

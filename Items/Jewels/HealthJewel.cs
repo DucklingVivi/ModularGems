@@ -10,39 +10,38 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ModularGems.Jewels
+namespace ModularGems.Items.Jewels
 {
-    public class HealthJewel : JewelComponent
+    public class HealthJewel : BasicJewel
     {
-
-
 
         public override void SetDefaults()
         {
-            DisplayName = "Health Jewel";
-            addTooltipLine("basicDesc", "Gem");
-            addTooltipLine("basicDesc2", "Increases max life by 20");
+            base.SetDefaults();
+            DisplayName.SetDefault("Health Jewel");
+            Tooltip.SetDefault("Gem\nIncreases max life by 20");
             Shape.Add(new Point16(0, -1));
             Shape.Add(new Point16(0, 0));
             Shape.Add(new Point16(0, 1));
             Shape.Add(new Point16(1, 1));
-            color = new Color(255, 78, 66);
-            itemColor = Color.White;
-            rarity = 3;
 
+            jewel.color = new Color(255, 78, 66);
+            Item.color = Color.White;
+            Item.rare = ItemRarityID.Orange;
+            syncJewel();
         }
 
-        internal override void Update(Player player)
+        public override void UpdateJewel(Player player)
         {
             player.statLifeMax2 += 20;
         }
-
-        public override void AddRecipe(Recipe recipe)
+        public override void AddRecipes()
         {
+            Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.LifeCrystal);
             recipe.AddIngredient(ItemID.HealingPotion, 2);
             recipe.AddTile(TileID.Anvils);
-
+            recipe.Register();
         }
     }
 }

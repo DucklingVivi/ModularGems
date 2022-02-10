@@ -10,42 +10,42 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace ModularGems.Jewels
+namespace ModularGems.Items.Jewels
 {
-    public class RunJewel : JewelComponent
+    public class RunJewel : BasicJewel
     {
 
-       
 
         public override void SetDefaults()
         {
-            DisplayName = "Run Jewel";
-            addTooltipLine("basicDesc", "Gem");
-            addTooltipLine("basicDesc2", "Lets you run super fast");
+            base.SetDefaults();
+            DisplayName.SetDefault("Run Jewel");
+            Tooltip.SetDefault("Gem\nLets you run super fast");
             Shape.Add(new Point16(-1, 0));
             Shape.Add(new Point16(0, 0));
             Shape.Add(new Point16(1, 0));
             Shape.Add(new Point16(1, 1));
             Shape.Add(new Point16(2, 0));
-            color = Color.LightGreen;
-            itemColor = Color.White;
-            rarity = 3;
-            
+
+
+            jewel.color = Color.LightGreen;
+            Item.color = Color.White;
+            Item.rare = ItemRarityID.Orange;
+            syncJewel();
         }
 
-        internal override void Update(Player player)
+        public override void UpdateJewel(Player player)
         {
             player.accRunSpeed = 6f;
         }
-
-        public override void AddRecipe(Recipe recipe)
+        public override void AddRecipes()
         {
-
+            Recipe recipe = CreateRecipe();
             recipe.AddRecipeGroup("ModularGems:Boots");
             recipe.AddIngredient(ItemID.SwiftnessPotion, 2);
             recipe.AddIngredient(ItemID.Aglet);
             recipe.AddTile(TileID.TinkerersWorkbench);
-
+            recipe.Register();
         }
     }
 }

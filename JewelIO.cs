@@ -17,7 +17,6 @@ namespace ModularGems
         {
 
             TagCompound tag = new TagCompound();
-            tag.Set("name", jewel.Name);
             tag.Set("color", jewel.color);
             tag.Set("shape", jewel.Shape);
             tag.Set("anchor", jewel.anchor);
@@ -28,7 +27,7 @@ namespace ModularGems
         internal static Jewel Load(TagCompound tag)
         {
            
-            Jewel jewel = new Jewel(tag.GetString("name"));
+            Jewel jewel = new Jewel();
             jewel.color = tag.Get<Color>("color");
             jewel.anchor = tag.Get<Point16>("anchor");
             jewel.Shape = tag.GetList<Point16>("shape").ToList();
@@ -38,8 +37,7 @@ namespace ModularGems
 
         internal static void Send(Jewel jewel, BinaryWriter writer)
         {
-            writer.Write(jewel.Name);
-            writer.Write(jewel.type);
+
             writer.WriteRGB(jewel.color);
             writer.WriteVector2(jewel.anchor.ToVector2());
             writer.Write(jewel.Shape.Count);
@@ -53,8 +51,7 @@ namespace ModularGems
         internal static Jewel Recieve(BinaryReader reader)
         {
             
-            Jewel retjewel = new Jewel(reader.ReadString());
-            retjewel.type = reader.ReadInt32();
+            Jewel retjewel = new Jewel();
             retjewel.color = reader.ReadRGB();
             retjewel.anchor = reader.ReadVector2().ToPoint16();
             int count = reader.ReadInt32();

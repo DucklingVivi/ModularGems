@@ -1,4 +1,4 @@
-﻿using ModularGems.Jewels;
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,16 +15,13 @@ namespace ModularGems
         {
             TagCompound tag = new TagCompound();
             List<TagCompound> tagList = new List<TagCompound>();
-            List<TagCompound> tag2List = new List<TagCompound>();
-            foreach (JewelGridData data in grid.jewelGridData)
+            foreach (Item item in grid.grid)
             {
-                tagList.Add(JewelIO.Save(data.jewel));
-                tag2List.Add(ItemIO.Save(data.item));
+                tagList.Add(ItemIO.Save(item));
             }
             tag.Set("width", grid.Width);
             tag.Set("height", grid.Height);
-            tag.Set("jewellist", tagList);
-            tag.Set("itemlist", tag2List);
+            tag.Set("gridlist", tagList);
             return tag;
         }
 
@@ -33,16 +30,15 @@ namespace ModularGems
             int width = tag.GetInt("width");
             int height = tag.GetInt("height");
             JewelGrid grid = new JewelGrid(width, height);
-            List<JewelGridData> jewelList = new List<JewelGridData>();
-            List<TagCompound> tagList = tag.GetList<TagCompound>("jewellist").ToList();
-            List<TagCompound> tag2List = tag.GetList<TagCompound>("itemlist").ToList();
+            List<Item> itemList = new List<Item>();
+            List<TagCompound> tagList = tag.GetList<TagCompound>("gridlist").ToList();
+
             for (int i = 0; i < tagList.Count; i++)
             {
-                Item item = ItemIO.Load(tag2List[i]);
-                ModularGems.Instance.jewelComponents[item.GetGlobalItem<ModularGemsItem>().jewelName].AddDetailsToItem(item);
-                jewelList.Add(new JewelGridData(JewelIO.Load(tagList[i]), item));
+                Item item = ItemIO.Load(tagList[i]);
+                itemList.Add(item);
             }
-            grid.jewelGridData = jewelList;
+            grid.grid = itemList;
 
             return grid;
         }
@@ -51,11 +47,11 @@ namespace ModularGems
         {
             writer.Write(grid.Width);
             writer.Write(grid.Height);
-            writer.Write(grid.jewelGridData.Count);
-            for (int i = 0; i < grid.jewelGridData.Count; i++)
+            writer.Write(grid.grid.Count);
+            for (int i = 0; i < grid.grid.Count; i++)
             {
-                ItemIO.Send(grid.jewelGridData[i].item, writer);
-                JewelIO.Send(grid.jewelGridData[i].jewel, writer);
+                ItemIO.Send(grid.grid[i], writer);
+              
             }
         }
 
@@ -68,9 +64,8 @@ namespace ModularGems
             for (int i = 0; i < count; i++)
             {
                 Item item = ItemIO.Receive(reader);
-                ModularGems.Instance.jewelComponents[item.GetGlobalItem<ModularGemsItem>().jewelName].AddDetailsToItem(item);
-                Jewel jewel = JewelIO.Recieve(reader);
-                retgrid.jewelGridData.Add(new JewelGridData(jewel, item));
+                retgrid.grid.Add(item);
+                
             }
             return retgrid;
         }

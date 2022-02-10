@@ -3,7 +3,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ModularGems.Jewels;
+using ModularGems.Items.Jewels;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -25,32 +25,22 @@ namespace ModularGems
         public List<Point16> _shape = new List<Point16>();
         public List<Point16> Shape = new List<Point16>();
         public Color color;
-        public int type;
-        public string Name;
         public int rotation { get; private set; }
         public Point16 anchor = new Point16(-1, -1);
+
         
-        public Jewel(string name)
+        public Jewel()
         {
-            rotation = 0;
-            JewelComponent comp;
-            if(ModularGems.Instance.jewelComponents.TryGetValue(name ?? "", out comp)){
-                this.type = comp.type;
-                this.Shape = new List<Point16>(comp.Shape);
-                this.color = comp.color;
-                this.Name = name;
-                this.SetRotation(0);
-            };
-            
+
+            this.SetRotation(0);
         }
         
         internal Jewel Clone()
         {
-            Jewel clone = new Jewel(Name);
-            clone.Shape = new List<Point16>(ModularGems.Instance.jewelComponents[Name].Shape);
+            Jewel clone = new Jewel();
+            clone.Shape = Shape;
             clone.color = color;
             clone.anchor = anchor;
-            clone.type = type;
             
             clone.rotation = rotation;
             clone._shape = _shape;

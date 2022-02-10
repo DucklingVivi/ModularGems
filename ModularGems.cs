@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ModularGems.ILEdits;
 using ModularGems.Items;
-using ModularGems.Jewels;
+using ModularGems.Items.Jewels;
 using ModularGems.UI;
 using ReLogic.Content;
 using System;
@@ -22,7 +22,6 @@ namespace ModularGems
 	public class ModularGems : Mod
 	{
 
-        public readonly IDictionary<string,JewelComponent> jewelComponents = new Dictionary<string,JewelComponent>();
         public static JewelBagSlotUI JewelBagSlotUI;
         public static JewelBagUI JewelBagUI;
         internal static int jewelBagSlotPosX;
@@ -41,40 +40,10 @@ namespace ModularGems
         {
             foreach (Type item in Code.GetTypes().OrderBy((Type type) => type.FullName, StringComparer.InvariantCulture))
             {
-                if (item.IsSubclassOf(typeof(JewelComponent)))
-                {
-                    JewelComponent jewelComponent = (JewelComponent)Activator.CreateInstance(item);
-                    jewelComponent.mod = this;
-                    string name = item.Name;
-                    if(jewelComponent.Autoload(ref name))
-                    {
-                        jewelComponent.Name = name;
-                        jewelComponent.type = JewelComponentLoader.ReserveComponentID();
-                        jewelComponent.texture = "ModularGems/Jewels/" + item.Name;
-
-                        Asset<Texture2D> dummyAsset;
-                        if(!ModContent.RequestIfExists<Texture2D>(jewelComponent.texture,out dummyAsset, AssetRequestMode.ImmediateLoad))
-                        {
-                            jewelComponent.texture = "ModularGems/Items/BasicJewel";
-                        }
-
-                        jewelComponent.SetDefaults();
-                        jewelComponents[name] = jewelComponent;
-                        JewelComponentLoader.jewelComponents.Add(jewelComponent);
-                        ContentInstance.Register(jewelComponent);
-
-                    }
-                }else if (item.IsSubclassOf(typeof(ILEdit)))
+                if (item.IsSubclassOf(typeof(ILEdit)))
                 {
                     ((ILEdit)Activator.CreateInstance(item)).Apply();
                 }
-            }
-        }
-        public override void AddRecipes()
-        {
-            foreach(JewelComponent jewelComponent in jewelComponents.Values)
-            {
-                jewelComponent.CreateRecipe(CreateRecipe(ModContent.ItemType<BasicJewel>()));
             }
         }
         public class ModularGemsSystem : ModSystem
