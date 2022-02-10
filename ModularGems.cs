@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ModularGems.ILEdits;
 using ModularGems.Items;
 using ModularGems.Jewels;
 using ModularGems.UI;
@@ -12,6 +13,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -62,6 +64,9 @@ namespace ModularGems
                         ContentInstance.Register(jewelComponent);
 
                     }
+                }else if (item.IsSubclassOf(typeof(ILEdit)))
+                {
+                    ((ILEdit)Activator.CreateInstance(item)).Apply();
                 }
             }
         }
@@ -100,6 +105,24 @@ namespace ModularGems
             public override void Unload()
             {
                 JewelBagSlotUI = null;
+            }
+            public override void AddRecipeGroups()
+            {
+
+                RecipeGroup group = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Cobalt Bar", new int[]
+                {
+                    ItemID.CobaltBar,
+                     ItemID.PalladiumBar
+                });
+                RecipeGroup.RegisterGroup("ModularGems:CobaltBars", group);
+                RecipeGroup group2 = new RecipeGroup(() => Language.GetTextValue("LegacyMisc.37") + " Boots", new int[]
+                {
+                    ItemID.HermesBoots,
+                    ItemID.FlurryBoots,
+                    ItemID.SailfishBoots,
+                    ItemID.SandBoots
+                });
+                RecipeGroup.RegisterGroup("ModularGems:Boots", group2);
             }
             public override void UpdateUI(GameTime gameTime)
             {

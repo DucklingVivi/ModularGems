@@ -1,4 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +14,25 @@ using static Terraria.Recipe;
 
 namespace ModularGems.Items
 {
-    public class BasicJewel : ModItem
+    public abstract class BasicJewel : ModItem
     {
+
+        public override string Texture => GetTexture();
+
+        public virtual string GetTexture()
+        {
+
+            string texture = "ModularGems/Jewels/" + Item.Name;
+
+            Asset<Texture2D> dummyAsset;
+            if (!ModContent.RequestIfExists<Texture2D>(texture, out dummyAsset, AssetRequestMode.ImmediateLoad))
+            {
+                texture = "ModularGems/Items/BasicJewel";
+            }
+
+
+            return texture;
+        }
 
         public override void SetDefaults()
         {
@@ -21,5 +40,8 @@ namespace ModularGems.Items
             Item.width = 18;
             Item.height = 18;
         }
+
+
+        public virtual void UpdateJewel(){}
     }
 }

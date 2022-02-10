@@ -33,6 +33,7 @@ namespace ModularGems.Items
             }
         }
 
+        
         public override void AddRecipes()
         {
             Recipe recipe = CreateRecipe();

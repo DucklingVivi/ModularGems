@@ -69,6 +69,7 @@ namespace ModularGems
             }
             base.SaveData(item, tag);
         }
+        
         public override void LoadData(Item item, TagCompound tag)
         {
             if (tag.ContainsKey("grid"))
